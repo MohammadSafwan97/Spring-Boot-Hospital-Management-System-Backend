@@ -1,6 +1,5 @@
 package com.safwantech.hms_backend.service;
 
-
 import com.safwantech.hms_backend.dto.PatientDto;
 import com.safwantech.hms_backend.entity.Patient;
 import com.safwantech.hms_backend.exception.ResourceNotFoundException;
@@ -8,9 +7,11 @@ import com.safwantech.hms_backend.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Service
 public class PatientService {
@@ -18,10 +19,9 @@ public class PatientService {
     private final PatientRepository patientRepository;
     private final ModelMapper modelMapper;
 
-
-
     /* ---------------- CREATE ---------------- */
 
+    @Transactional
     public PatientDto createPatient(PatientDto patientDto) {
 
         Patient patient = modelMapper.map(patientDto, Patient.class);
@@ -31,19 +31,20 @@ public class PatientService {
         return modelMapper.map(savedPatient, PatientDto.class);
     }
 
-    /* -------------------GET ALL ------------------*/
+    /* ---------------- GET ALL ---------------- */
 
+    @Transactional(readOnly = true)
     public List<PatientDto> getAllPatients() {
 
-        List<Patient> patients = patientRepository.findAll();
-
-        return patients.stream()
+        return patientRepository.findAll()
+                .stream()
                 .map(patient -> modelMapper.map(patient, PatientDto.class))
                 .collect(Collectors.toList());
     }
 
     /* ---------------- GET BY ID ---------------- */
 
+    @Transactional(readOnly = true)
     public PatientDto getPatientById(Long id) {
 
         Patient patient = patientRepository.findById(id)
@@ -55,6 +56,7 @@ public class PatientService {
 
     /* ---------------- UPDATE ---------------- */
 
+    @Transactional
     public PatientDto updatePatient(Long id, PatientDto patientDto) {
 
         Patient patient = patientRepository.findById(id)
@@ -63,13 +65,13 @@ public class PatientService {
 
         patient.setPatientId(patientDto.getPatientId());
         patient.setName(patientDto.getName());
-        patient.setAge(patientDto.getAge());
         patient.setGender(patientDto.getGender());
-        patient.setPhone(patientDto.getPhone());
-        patient.setBloodGroup(patientDto.getBloodGroup());
+        patient.setPhoneNumber(patientDto.getPhoneNumber());
+        patient.setEmail(patientDto.getEmail());
+        patient.setDateOfBirth(patientDto.getDateOfBirth());
+        patient.setAddress(patientDto.getAddress());
+        patient.setBloodGroupType(patientDto.getBloodGroupType());
         patient.setPatientType(patientDto.getPatientType());
-        patient.setWard(patientDto.getWard());
-        patient.setDoctorAssigned(patientDto.getDoctorAssigned());
 
         Patient updatedPatient = patientRepository.save(patient);
 
@@ -78,6 +80,7 @@ public class PatientService {
 
     /* ---------------- DELETE ---------------- */
 
+    @Transactional
     public void deletePatient(Long id) {
 
         Patient patient = patientRepository.findById(id)
@@ -86,5 +89,4 @@ public class PatientService {
 
         patientRepository.delete(patient);
     }
-
 }

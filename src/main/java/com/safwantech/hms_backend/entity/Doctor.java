@@ -1,26 +1,56 @@
 package com.safwantech.hms_backend.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.*;
 
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "doctors")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Builder
 public class Doctor {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = " name is required")
+    @Size(max = 50)
+    @Column(nullable = false)
     private String name;
+
+    @Email
+    @NotBlank
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid phone number")
+    private String phoneNumber;
+
+    @NotBlank
+    @Column(nullable = false)
     private String specialization;
-    private String department;
-    private String experience;
-    private Integer phoneNo;
+
+    @Min(0)
+    @Max(60)
+    private Integer experience;
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }
+

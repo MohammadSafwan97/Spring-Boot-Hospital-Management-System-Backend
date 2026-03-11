@@ -4,6 +4,7 @@ package com.safwantech.hms_backend.controller;
 import com.safwantech.hms_backend.dto.PatientDto;
 import com.safwantech.hms_backend.service.PatientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,10 +25,14 @@ public class PatientController {
     @PostMapping
     public ResponseEntity<PatientDto> createPatient(
             @RequestBody PatientDto patientDto) {
-
+try{
         PatientDto createdPatient = patientService.createPatient(patientDto);
 
-        return ResponseEntity.ok(createdPatient);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdPatient);
+    }
+catch (Exception e){
+    return ResponseEntity.badRequest().build();
+}
     }
 
     /* ---------------- GET ALL ---------------- */
