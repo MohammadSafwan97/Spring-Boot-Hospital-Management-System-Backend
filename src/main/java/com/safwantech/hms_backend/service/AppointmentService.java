@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Service
 public class AppointmentService {
@@ -48,4 +51,12 @@ public class AppointmentService {
 
         return response;
     }
+    public List<AppointmentDto> getAllAppointments(){
+        List<AppointmentDto> appointments=appointmentRepository.findAll().stream()
+                .map(appointment->modelMapper
+                        .map(appointment,AppointmentDto.class))
+                .toList();
+        return appointments;
+    }
 }
+
