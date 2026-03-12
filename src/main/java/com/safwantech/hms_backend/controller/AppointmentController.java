@@ -20,20 +20,41 @@ public class AppointmentController {
 
     @PostMapping
     public ResponseEntity<AppointmentDto> createAppointment(@RequestBody
-                                                                AppointmentDto appointmentDto){
-        try{
-          return ResponseEntity.status(HttpStatus.CREATED)
-                  .body(appointmentService.createAppointment(appointmentDto));
-        }
-        catch(Exception e){
+                                                            AppointmentDto appointmentDto) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(appointmentService.createAppointment(appointmentDto));
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
 
         }
     }
+
     @GetMapping
-    public ResponseEntity<List<AppointmentDto>>getAllAppointments(){
-        List<AppointmentDto> appointments=appointmentService.getAllAppointments();
+    public ResponseEntity<List<AppointmentDto>> getAllAppointments() {
+        List<AppointmentDto> appointments = appointmentService.getAllAppointments();
         return ResponseEntity.ok(appointments);
+    }
+    @GetMapping("{appointmentId}")
+    public ResponseEntity<AppointmentDto> getById(@PathVariable Long appointmentId){
+        try {
+            AppointmentDto appointmentDto = appointmentService.getById(appointmentId);
+            return ResponseEntity.status(HttpStatus.OK).body(appointmentDto);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AppointmentDto> updateById(@PathVariable Long id, @RequestBody AppointmentDto appointmentDto) {
+        try {
+            AppointmentDto updatedAppointment = appointmentService.updateAppoitnment(id, appointmentDto);
+            return ResponseEntity.ok(updatedAppointment);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

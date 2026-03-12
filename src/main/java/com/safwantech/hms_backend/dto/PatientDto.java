@@ -12,8 +12,6 @@ import java.time.LocalDate;
 public class PatientDto {
     private Long id;
 
-    private String patientId;
-
     private String name;
 
     private BloodGroupType bloodGroupType;
@@ -33,6 +31,4 @@ public class PatientDto {
     private PatientType patientType; // Inpatient / Outpatient / Emergency
 
     private String ward;
-
-    private String doctorAssigned;
 }

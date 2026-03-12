@@ -64,4 +64,13 @@ public class DoctorService {
 
         return modelMapper.map(doctor, DoctorDto.class);
     }
+
+    public void deleteDoctor(Long doctorId){
+        Doctor doctor=doctorRepository.findById(doctorId)
+                .orElseThrow(()->new ResourceNotFoundException("Doctor not found with id: " + doctorId));
+        doctorRepository.delete(doctor);
+    }
+
 }
+
+

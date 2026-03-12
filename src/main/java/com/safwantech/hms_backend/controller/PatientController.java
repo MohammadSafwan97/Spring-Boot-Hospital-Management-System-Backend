@@ -31,6 +31,7 @@ try{
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPatient);
     }
 catch (Exception e){
+    e.printStackTrace();
     return ResponseEntity.badRequest().build();
 }
     }

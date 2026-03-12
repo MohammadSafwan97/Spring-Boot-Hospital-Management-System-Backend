@@ -58,5 +58,11 @@ public class DoctorController {
             return ResponseEntity.badRequest().build();
         }
         }
+    @DeleteMapping("/{doctorId}")
+    public ResponseEntity<String> deleteDoctor(@PathVariable Long doctorId){
+        doctorService.deleteDoctor(doctorId);
+        return ResponseEntity.ok("Patient deleted successfully");
+    }
+
 
 }

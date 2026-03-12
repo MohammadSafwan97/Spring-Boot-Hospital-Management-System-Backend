@@ -63,7 +63,7 @@ public class PatientService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Patient not found with id: " + id));
 
-        patient.setPatientId(patientDto.getPatientId());
+
         patient.setName(patientDto.getName());
         patient.setGender(patientDto.getGender());
         patient.setPhoneNumber(patientDto.getPhoneNumber());
@@ -89,4 +89,5 @@ public class PatientService {
 
         patientRepository.delete(patient);
     }
+
 }

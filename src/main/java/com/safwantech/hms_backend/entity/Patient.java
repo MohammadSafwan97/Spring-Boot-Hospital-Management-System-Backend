@@ -22,9 +22,6 @@ public class Patient {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String patientId;
-
     @NotBlank
     @Size(max = 50)
     @Column(nullable = false)

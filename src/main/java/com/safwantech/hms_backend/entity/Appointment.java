@@ -43,7 +43,7 @@ public class Appointment {
     private Patient patient;
 
     @Size(max = 255)
-    private String reason;
+    private String remarks;
 
     private LocalDateTime createdAt;
 
