@@ -41,7 +41,7 @@ public class Prescription {
     @JoinColumn(name="doctor_id")
     private Doctor doctor;
 
-    @OneToMany(mappedBy = "prescription")
+    @OneToMany(mappedBy = "prescription",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<PrescriptionItem> prescriptionItems;
 
     @Column(updatable = false)

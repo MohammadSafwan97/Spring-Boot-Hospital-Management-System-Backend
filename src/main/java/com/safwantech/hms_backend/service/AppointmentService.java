@@ -97,6 +97,20 @@ public class AppointmentService {
         return updatedDto;
     }
 
+
+    @Transactional
+    public void deleteAppointment(Long appointmentId){
+
+        if(!appointmentRepository.existsById(appointmentId)){
+            throw new ResourceNotFoundException(
+                    "Appointment not found with id: " + appointmentId);
+        }
+
+        appointmentRepository.deleteById(appointmentId);
+    }
+
+
+
 }
 
 
