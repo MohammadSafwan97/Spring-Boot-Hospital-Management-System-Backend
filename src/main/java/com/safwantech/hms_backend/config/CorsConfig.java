@@ -15,7 +15,7 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
 
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173")
+                        .allowedOrigins("https://spring-boot-hospital-management-system.onrender.com")
                         .allowedMethods("*")
                         .allowedHeaders("*");
             }
