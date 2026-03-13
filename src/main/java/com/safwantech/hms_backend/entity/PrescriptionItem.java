@@ -1,33 +1,28 @@
 package com.safwantech.hms_backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 @Getter
+@Setter
 @Entity
-@Table(name ="prescriptionItems" )
 public class PrescriptionItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+
     private String medicine;
 
-    @Column(nullable = false)
     private String dosage;
 
-    @Column(nullable = false)
     private String instruction;
 
     @ManyToOne
     @JoinColumn(name = "prescription_id")
+    @JsonIgnore
     private Prescription prescription;
-
 }
