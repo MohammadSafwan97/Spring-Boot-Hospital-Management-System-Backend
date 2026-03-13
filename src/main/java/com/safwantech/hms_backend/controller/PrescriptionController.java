@@ -22,6 +22,10 @@ public class PrescriptionController {
 
     private final PrescriptionService prescriptionService;
 
+    @GetMapping("/health")
+    public String healthCheck(){
+        return "api is ok";
+    }
 
     @PostMapping
     public ResponseEntity<PrescriptionDto> createPrescription(
