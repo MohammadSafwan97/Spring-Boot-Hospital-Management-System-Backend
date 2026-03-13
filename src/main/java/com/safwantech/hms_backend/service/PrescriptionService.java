@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class PrescriptionService {
+
     private final PrescriptionRepository prescriptionRepository;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
@@ -26,27 +27,31 @@ public class PrescriptionService {
 
     @Transactional
     public PrescriptionDto createPrescription(PrescriptionDto dto) {
-        Doctor doctor=doctorRepository.findById(dto.getDoctorId())
-                .orElseThrow(()->new ResourceNotFoundException("Doctor not found with id : "+dto.getDoctorId()));
 
-        Patient patient=patientRepository.findById(dto.getPatientId())
-                .orElseThrow(()->new ResourceNotFoundException("Patient not found with id :"+dto.getPatientId()));
+        Doctor doctor = doctorRepository.findById(dto.getDoctorId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Doctor not found with id : " + dto.getDoctorId()));
 
-        Appointment appointment=appointmentRepository.findById(dto.getAppointmentId())
-                .orElseThrow(()->new ResourceNotFoundException("Appointment not found with id"+dto.getAppointmentId()));
+        Patient patient = patientRepository.findById(dto.getPatientId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Patient not found with id : " + dto.getPatientId()));
 
-        Prescription prescription=new Prescription();
+        Appointment appointment = appointmentRepository.findById(dto.getAppointmentId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Appointment not found with id : " + dto.getAppointmentId()));
 
-        prescription.setDosage(dto.getDosage());
-        prescription.setMedication(dto.getMedication());
+        Prescription prescription = new Prescription();
+
         prescription.setDiagnosis(dto.getDiagnosis());
+        prescription.setMedication(dto.getMedication());
+        prescription.setDosage(dto.getDosage());
         prescription.setInstruction(dto.getInstruction());
 
         prescription.setDoctor(doctor);
         prescription.setPatient(patient);
         prescription.setAppointment(appointment);
 
-        if (dto.getItems() != null) {
+        if (dto.getItems() != null && !dto.getItems().isEmpty()) {
 
             List<PrescriptionItem> items = dto.getItems()
                     .stream()
@@ -58,26 +63,19 @@ public class PrescriptionService {
                         item.setDosage(itemDto.getDosage());
                         item.setInstruction(itemDto.getInstruction());
 
-                        /**
-                         * Important:
-                         * Set parent reference for JPA relationship
-                         */
                         item.setPrescription(prescription);
 
                         return item;
 
                     }).collect(Collectors.toList());
 
-            prescription.setPrescriptionItems(items);
+            prescription.getPrescriptionItems().addAll(items);
         }
 
+        Prescription savedPrescription = prescriptionRepository.save(prescription);
 
-        prescriptionRepository.save(prescription);
-
-        return modelMapper.map(prescription,PrescriptionDto.class);
+        return modelMapper.map(savedPrescription, PrescriptionDto.class);
     }
-
-
 
     public PrescriptionDto getPrescriptionById(Long id) {
 
@@ -97,7 +95,6 @@ public class PrescriptionService {
                 .toList();
     }
 
-
     @Transactional
     public PrescriptionDto updatePrescription(Long id, PrescriptionDto dto) {
 
@@ -105,19 +102,11 @@ public class PrescriptionService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Prescription not found with id : " + id));
 
-
-        /**
-         * Update fields
-         */
         prescription.setDiagnosis(dto.getDiagnosis());
         prescription.setMedication(dto.getMedication());
         prescription.setDosage(dto.getDosage());
         prescription.setInstruction(dto.getInstruction());
 
-
-        /**
-         * Save updated entity
-         */
         Prescription updatedPrescription = prescriptionRepository.save(prescription);
 
         return modelMapper.map(updatedPrescription, PrescriptionDto.class);
@@ -132,8 +121,4 @@ public class PrescriptionService {
 
         prescriptionRepository.delete(prescription);
     }
-
-
-
-
 }

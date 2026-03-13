@@ -16,6 +16,7 @@ import java.util.List;
 @Getter
 @Entity
 public class Prescription {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,11 +42,12 @@ public class Prescription {
     @JoinColumn(name="doctor_id")
     private Doctor doctor;
 
-    @OneToMany(mappedBy = "prescription",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<PrescriptionItem> prescriptionItems;
+    @OneToMany(mappedBy = "prescription", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PrescriptionItem> prescriptionItems = new ArrayList<>();
 
     @Column(updatable = false)
     private LocalDateTime createdAt;
+
     private LocalDateTime updatedAt;
 
     @PrePersist
