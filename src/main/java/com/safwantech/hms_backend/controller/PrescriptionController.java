@@ -27,10 +27,14 @@ public class PrescriptionController {
     public ResponseEntity<PrescriptionDto> createPrescription(
             @Valid @RequestBody PrescriptionDto dto
     ) {
+        try {
+            PrescriptionDto createdPrescription = prescriptionService.createPrescription(dto);
 
-        PrescriptionDto createdPrescription = prescriptionService.createPrescription(dto);
-
-        return new ResponseEntity<>(createdPrescription, HttpStatus.CREATED);
+            return new ResponseEntity<>(createdPrescription, HttpStatus.CREATED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 
