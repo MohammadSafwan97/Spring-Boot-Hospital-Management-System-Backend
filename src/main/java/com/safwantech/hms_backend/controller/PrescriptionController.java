@@ -6,7 +6,6 @@ import com.safwantech.hms_backend.service.PrescriptionService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,11 +54,10 @@ public class PrescriptionController {
 
 
     @GetMapping
-    public ResponseEntity<List<PrescriptionDto>> getAllPrescriptions() {
+    public ResponseEntity<String> getAllPrescriptions() {
 
-        List<PrescriptionDto> prescriptions = prescriptionService.getAllPrescriptions();
 
-        return ResponseEntity.ok(prescriptions);
+        return ResponseEntity.ok("api was hit");
     }
 
 
