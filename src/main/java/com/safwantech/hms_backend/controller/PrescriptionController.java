@@ -54,10 +54,10 @@ public class PrescriptionController {
 
 
     @GetMapping
-    public ResponseEntity<String> getAllPrescriptions() {
+    public ResponseEntity<List<PrescriptionDto>> getAllPrescriptions() {
+        List<PrescriptionDto> prescriptions=prescriptionService.getAllPrescriptions();
 
-
-        return ResponseEntity.ok("api was hit");
+        return ResponseEntity.ok(prescriptions);
     }
 
 

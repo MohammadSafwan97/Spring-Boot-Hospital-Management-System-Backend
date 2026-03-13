@@ -94,7 +94,7 @@ public class PrescriptionService {
 
         return prescriptions.stream()
                 .map(p -> modelMapper.map(p, PrescriptionDto.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
 
