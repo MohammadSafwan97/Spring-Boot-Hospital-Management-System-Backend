@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 @Getter
 @Entity
+@Table(name = "prescription")
 public class Prescription {
 
     @Id
@@ -30,17 +31,16 @@ public class Prescription {
 
     @OneToOne
     @JoinColumn(name="appointment_id")
-    @JsonIgnore
+
     private Appointment appointment;
 
     @ManyToOne
     @JoinColumn(name="patient_id")
-    @JsonIgnore
     private Patient patient;
 
     @ManyToOne
     @JoinColumn(name="doctor_id")
-    @JsonIgnore
+
     private Doctor doctor;
 
     @OneToMany(mappedBy = "prescription", cascade = CascadeType.ALL, orphanRemoval = true)
