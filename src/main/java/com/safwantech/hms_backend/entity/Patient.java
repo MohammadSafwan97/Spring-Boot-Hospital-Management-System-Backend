@@ -50,6 +50,7 @@ public class Patient {
     @Size(max = 200)
     private String address;
 
+    @Column
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

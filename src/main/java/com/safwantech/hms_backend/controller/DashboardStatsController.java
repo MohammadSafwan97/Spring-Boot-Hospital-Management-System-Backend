@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DashboardStatsController {
     private final DashboardService dashboardService;
-    @GetMapping
+    @GetMapping("/stats")
     public ResponseEntity<DashboardStatsDto> getStats(){
         DashboardStatsDto stats=dashboardService.getDashboardStats();
         return ResponseEntity.ok(stats);
