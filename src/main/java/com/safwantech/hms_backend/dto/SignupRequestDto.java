@@ -17,9 +17,9 @@ import java.time.LocalDateTime;
 public class SignupRequestDto {
     private String username;
     private String password;
-    private String email;
-    private Role role;
-    private Boolean active;
+        private String email;
+        private Role role;
+        private Boolean active;
 
 }
 
