@@ -46,7 +46,7 @@ public class UserService {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
-        existingUser.setName(dto.getName());
+        existingUser.setUsername(dto.getUsername());
         existingUser.setEmail(dto.getEmail());
         existingUser.setRole(dto.getRole());
 
