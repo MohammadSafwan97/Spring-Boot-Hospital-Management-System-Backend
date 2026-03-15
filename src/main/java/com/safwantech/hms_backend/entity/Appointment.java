@@ -8,6 +8,7 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Table(name = "appointments")
@@ -33,6 +34,9 @@ public class Appointment {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AppointmentStatus status;
+
+    @OneToMany(mappedBy ="appointment",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Prescription> prescriptions;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false)

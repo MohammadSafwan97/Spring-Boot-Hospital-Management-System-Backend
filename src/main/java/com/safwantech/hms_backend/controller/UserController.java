@@ -1,8 +1,10 @@
 package com.safwantech.hms_backend.controller;
 
 import com.safwantech.hms_backend.dto.UserDto;
+import com.safwantech.hms_backend.dto.UserResponseDto;
 import com.safwantech.hms_backend.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,39 +20,68 @@ public class UserController {
     /* ---------------- GET ALL USERS ---------------- */
 
     @GetMapping
-    public List<UserDto> getAllUsers() {
-
-        return userService.getAllUsers();
-
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     /* ---------------- CREATE USER ---------------- */
 
     @PostMapping
-    public UserDto createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserDto userDto) {
 
-        return userService.createUser(userDto);
+        try {
+
+            UserResponseDto savedUser = userService.createUser(userDto);
+
+            return ResponseEntity.ok(savedUser);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            return ResponseEntity.badRequest().build();
+
+        }
+    }
+
+    /* ---------------- GET USER BY USERNAME ---------------- */
+
+    @GetMapping("/username/{name}")
+    public ResponseEntity<UserDto> getUserByName(@PathVariable String name) {
+
+        return ResponseEntity.ok(userService.findByUsername(name));
+
+    }
+
+    /* ---------------- GET USER BY ID ---------------- */
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
+
+        return ResponseEntity.ok(userService.findById(userId));
 
     }
 
     /* ---------------- UPDATE USER ---------------- */
 
     @PutMapping("/{id}")
-    public UserDto updateUser(
+    public ResponseEntity<UserDto> updateUser(
             @PathVariable Long id,
             @RequestBody UserDto userDto
     ) {
 
-        return userService.updateUser(id, userDto);
+        return ResponseEntity.ok(userService.updateUser(id, userDto));
 
     }
 
     /* ---------------- DELETE USER ---------------- */
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
 
         userService.deleteUser(id);
+
+        return ResponseEntity.noContent().build();
 
     }
 

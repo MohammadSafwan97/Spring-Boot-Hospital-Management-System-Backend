@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "doctors")
@@ -29,8 +30,12 @@ public class Doctor {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Appointment> appointments;
+
     @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid phone number")
     private String phoneNumber;
+
 
     @NotBlank
     @Column(nullable = false)
