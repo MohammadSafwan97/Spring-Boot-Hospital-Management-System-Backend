@@ -11,8 +11,15 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+
+@Table(
+        name = "users",
+        indexes = {
+                @Index(name = "idx_user_email", columnList = "email"),
+                @Index(name = "idx_user_role", columnList = "role")
+        }
+)
 @Entity
-@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor

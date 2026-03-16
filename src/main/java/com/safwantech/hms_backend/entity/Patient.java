@@ -9,8 +9,17 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Table(
+        name = "patients",
+        indexes = {
+                @Index(name = "idx_patient_email", columnList = "email"),
+                @Index(name = "idx_patient_phone", columnList = "phoneNumber"),
+                @Index(name = "idx_patient_type", columnList = "patientType"),
+                @Index(name = "idx_patient_blood", columnList = "bloodGroupType")
+        }
+)
+
 @Entity
-@Table(name = "patients")
 @Getter
 @Setter
 @NoArgsConstructor
