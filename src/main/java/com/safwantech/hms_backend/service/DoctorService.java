@@ -48,7 +48,7 @@ public class DoctorService {
         doctor.setName(doctorDto.getName());
         doctor.setSpecialization(doctorDto.getSpecialization());
         doctor.setExperience(doctorDto.getExperience());
-        doctor.setPhoneNumber(doctorDto.getPhoneNo());
+        doctor.setPhoneNo(doctorDto.getPhoneNo());
 
         Doctor updatedDoctor = doctorRepository.save(doctor);
 
