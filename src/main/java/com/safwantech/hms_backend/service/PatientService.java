@@ -6,6 +6,8 @@ import com.safwantech.hms_backend.exception.ResourceNotFoundException;
 import com.safwantech.hms_backend.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,5 +91,15 @@ public class PatientService {
 
         patientRepository.delete(patient);
     }
+
+
+    @Transactional(readOnly = true)
+    public Page<PatientDto> getPatients(Pageable pageable) {
+
+        return patientRepository.findAll(pageable)
+                .map(patient -> modelMapper.map(patient, PatientDto.class));
+    }
+
+
 
 }

@@ -4,6 +4,8 @@ import com.safwantech.hms_backend.entity.type.AppointmentStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -48,9 +50,9 @@ public class Appointment {
 
     @Size(max = 255)
     private String remarks;
-
+    @CreationTimestamp
     private LocalDateTime createdAt;
-
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @PrePersist

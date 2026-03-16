@@ -3,9 +3,14 @@ package com.safwantech.hms_backend.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+
+
 
 @Entity
 @Table(name = "doctors")
@@ -34,7 +39,7 @@ public class Doctor {
     private List<Appointment> appointments;
 
     @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid phone number")
-    private String phoneNumber;
+    private String phoneNo;
 
 
     @NotBlank
@@ -45,7 +50,10 @@ public class Doctor {
     @Max(60)
     private Integer experience;
     @Column(updatable = false)
+
+    @CreationTimestamp
     private LocalDateTime createdAt;
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @PrePersist
