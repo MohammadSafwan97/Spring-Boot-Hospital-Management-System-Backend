@@ -18,15 +18,16 @@ public class DashboardService {
     private final DoctorRepository doctorRepository;
     private final AppointmentRepository appointmentRepository;
 
-    public DashboardStatsDto getDashboardStats(){
-    Long totalPatients=patientRepository.count();
-    Long totalDoctors=doctorRepository.count();
-    long totalAppointments=appointmentRepository.count();
-    Long emergencyPatients=patientRepository.countByPatientType(PatientType.EMERGENCY);
-    Long todayAppointments=appointmentRepository.countByAppointmentDate(LocalDate.now());
-    Long pendingAppointments=appointmentRepository.countByStatus(AppointmentStatus.SCHEDULED);
-    Long completedAppointments=appointmentRepository.countByStatus(AppointmentStatus.COMPLETED);
-    Long newPatientsThisMonth=patientRepository.countByCreatedAtAfter(
+    public DashboardStatsDto getDashboardStats(Long clinicId){
+    Long totalPatients = patientRepository.countByClinicId(clinicId);
+    Long totalDoctors = doctorRepository.countByClinicId(clinicId);
+    long totalAppointments = appointmentRepository.findByClinicId(clinicId).size();
+    Long emergencyPatients = patientRepository.countByClinicIdAndPatientType(clinicId, PatientType.EMERGENCY);
+    Long todayAppointments = appointmentRepository.countByClinicIdAndAppointmentDate(clinicId, LocalDate.now());
+    Long pendingAppointments = appointmentRepository.countByClinicIdAndStatus(clinicId, AppointmentStatus.SCHEDULED);
+    Long completedAppointments = appointmentRepository.countByClinicIdAndStatus(clinicId, AppointmentStatus.COMPLETED);
+    Long newPatientsThisMonth = patientRepository.countByClinicIdAndCreatedAtAfter(
+            clinicId,
             LocalDate.now().withDayOfMonth(1).atStartOfDay()
     );
         return new DashboardStatsDto(

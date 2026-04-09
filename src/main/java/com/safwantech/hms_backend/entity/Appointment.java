@@ -50,6 +50,10 @@ public class Appointment {
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "clinic_id", nullable = false)
+    private Clinic clinic;
+
     @Size(max = 255)
     private String remarks;
     @CreationTimestamp

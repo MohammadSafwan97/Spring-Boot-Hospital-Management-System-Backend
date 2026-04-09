@@ -13,12 +13,21 @@ import java.util.List;
 @Setter
 @Getter
 @Entity
-@Table(name = "prescription")
+@Table(
+        name = "prescription",
+        indexes = {
+                @Index(name = "idx_prescription_clinic", columnList = "clinic_id")
+        }
+)
 public class Prescription {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "clinic_id", nullable = false)
+    private Clinic clinic;
 
     @Column(nullable = false)
     private String diagnosis;

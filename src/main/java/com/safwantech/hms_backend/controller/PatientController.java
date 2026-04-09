@@ -25,53 +25,48 @@ public class PatientController {
     @PostMapping
     public ResponseEntity<PatientDto> createPatient(
             @RequestBody PatientDto patientDto) {
-try{
-        PatientDto createdPatient = patientService.createPatient(patientDto);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdPatient);
-    }
-catch (Exception e){
-    e.printStackTrace();
-    return ResponseEntity.badRequest().build();
-}
+        try {
+            PatientDto createdPatient = patientService.createPatient(patientDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdPatient);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     /* ---------------- GET ALL ---------------- */
 
     @GetMapping
-    public ResponseEntity<List<PatientDto>> getAllPatients() {
-
-        return ResponseEntity.ok(patientService.getAllPatients());
+    public ResponseEntity<List<PatientDto>> getAllPatients(@RequestParam Long clinicId) {
+        return ResponseEntity.ok(patientService.getAllPatients(clinicId));
     }
 
     /* ---------------- GET BY ID ---------------- */
 
     @GetMapping("/{id}")
     public ResponseEntity<PatientDto> getPatientById(
+            @RequestParam Long clinicId,
             @PathVariable Long id) {
-
-        return ResponseEntity.ok(patientService.getPatientById(id));
+        return ResponseEntity.ok(patientService.getPatientById(clinicId, id));
     }
 
     /* ---------------- UPDATE ---------------- */
 
     @PutMapping("/{id}")
     public ResponseEntity<PatientDto> updatePatient(
+            @RequestParam Long clinicId,
             @PathVariable Long id,
             @RequestBody PatientDto patientDto) {
-
-        return ResponseEntity.ok(
-                patientService.updatePatient(id, patientDto)
-        );
+        return ResponseEntity.ok(patientService.updatePatient(clinicId, id, patientDto));
     }
 
     /* ---------------- DELETE ---------------- */
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePatient(
+            @RequestParam Long clinicId,
             @PathVariable Long id) {
-
-        patientService.deletePatient(id);
+        patientService.deletePatient(clinicId, id);
 
         return ResponseEntity.ok("Patient deleted successfully");
     }

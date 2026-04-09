@@ -7,11 +7,12 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-
+    
 @Setter
 @Getter
 public class AppointmentDto {
     private Long id;
+    private Long clinicId;
     private LocalDate appointmentDate;
     private LocalTime appointmentTime;
     private String timeSlot;

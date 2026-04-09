@@ -1,7 +1,6 @@
 package com.safwantech.hms_backend.controller;
 
 import com.safwantech.hms_backend.dto.AppointmentDto;
-import com.safwantech.hms_backend.entity.Appointment;
 import com.safwantech.hms_backend.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,14 +31,14 @@ public class AppointmentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AppointmentDto>> getAllAppointments() {
-        List<AppointmentDto> appointments = appointmentService.getAllAppointments();
+    public ResponseEntity<List<AppointmentDto>> getAllAppointments(@RequestParam Long clinicId) {
+        List<AppointmentDto> appointments = appointmentService.getAllAppointments(clinicId);
         return ResponseEntity.ok(appointments);
     }
     @GetMapping("{appointmentId}")
-    public ResponseEntity<AppointmentDto> getById(@PathVariable Long appointmentId){
+    public ResponseEntity<AppointmentDto> getById(@RequestParam Long clinicId, @PathVariable Long appointmentId){
         try {
-            AppointmentDto appointmentDto = appointmentService.getById(appointmentId);
+            AppointmentDto appointmentDto = appointmentService.getById(clinicId, appointmentId);
             return ResponseEntity.status(HttpStatus.OK).body(appointmentDto);
         }catch (Exception e){
             e.printStackTrace();
@@ -48,9 +47,9 @@ public class AppointmentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AppointmentDto> updateById(@PathVariable Long id, @RequestBody AppointmentDto appointmentDto) {
+    public ResponseEntity<AppointmentDto> updateById(@RequestParam Long clinicId, @PathVariable Long id, @RequestBody AppointmentDto appointmentDto) {
         try {
-            AppointmentDto updatedAppointment = appointmentService.updateAppoitnment(id, appointmentDto);
+            AppointmentDto updatedAppointment = appointmentService.updateAppointment(clinicId, id, appointmentDto);
             return ResponseEntity.ok(updatedAppointment);
         } catch (Exception e) {
             e.printStackTrace();
@@ -59,9 +58,8 @@ public class AppointmentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteAppointment(@PathVariable Long id){
-
-        appointmentService.deleteAppointment(id);
+    public ResponseEntity<String> deleteAppointment(@RequestParam Long clinicId, @PathVariable Long id){
+        appointmentService.deleteAppointment(clinicId, id);
 
         return ResponseEntity.ok("Appointment deleted successfully");
 

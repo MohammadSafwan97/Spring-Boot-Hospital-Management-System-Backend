@@ -15,6 +15,11 @@ public class PrescriptionItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "clinic_id", nullable = false)
+    @JsonIgnore
+    private Clinic clinic;
+
     private String medicine;
 
     private String dosage;

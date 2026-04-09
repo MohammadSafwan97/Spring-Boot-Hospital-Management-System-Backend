@@ -9,6 +9,7 @@ import java.util.List;
 public class PrescriptionDto {
 
     private Long id;
+    private Long clinicId;
 
     private String diagnosis;
     private String medication;

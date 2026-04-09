@@ -20,8 +20,8 @@ public class UserController {
     /* ---------------- GET ALL USERS ---------------- */
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<List<UserDto>> getAllUsers(@RequestParam Long clinicId) {
+        return ResponseEntity.ok(userService.getAllUsers(clinicId));
     }
 
     /* ---------------- CREATE USER ---------------- */
@@ -47,42 +47,34 @@ public class UserController {
     /* ---------------- GET USER BY USERNAME ---------------- */
 
     @GetMapping("/username/{name}")
-    public ResponseEntity<UserDto> getUserByName(@PathVariable String name) {
-
-        return ResponseEntity.ok(userService.findByUsername(name));
-
+    public ResponseEntity<UserDto> getUserByName(@RequestParam Long clinicId, @PathVariable String name) {
+        return ResponseEntity.ok(userService.findByUsername(clinicId, name));
     }
 
     /* ---------------- GET USER BY ID ---------------- */
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
-
-        return ResponseEntity.ok(userService.findById(userId));
-
+    public ResponseEntity<UserDto> getUserById(@RequestParam Long clinicId, @PathVariable Long userId) {
+        return ResponseEntity.ok(userService.findById(clinicId, userId));
     }
 
     /* ---------------- UPDATE USER ---------------- */
 
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(
+            @RequestParam Long clinicId,
             @PathVariable Long id,
             @RequestBody UserDto userDto
     ) {
-
-        return ResponseEntity.ok(userService.updateUser(id, userDto));
-
+        return ResponseEntity.ok(userService.updateUser(clinicId, id, userDto));
     }
 
     /* ---------------- DELETE USER ---------------- */
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-
-        userService.deleteUser(id);
-
+    public ResponseEntity<Void> deleteUser(@RequestParam Long clinicId, @PathVariable Long id) {
+        userService.deleteUser(clinicId, id);
         return ResponseEntity.noContent().build();
-
     }
 
 }

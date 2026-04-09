@@ -18,12 +18,12 @@ import java.time.LocalDateTime;
 
 public class SignupRequestDto {
     private String username;
-
-        private String password;
-        @Email
-        private String email;
-        private Role role;
-        private Boolean active;
+    private Long clinicId;
+    private String password;
+    @Email
+    private String email;
+    private Role role;
+    private Boolean active;
 
 }
 

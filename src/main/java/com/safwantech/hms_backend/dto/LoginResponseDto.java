@@ -10,4 +10,5 @@ import lombok.Setter;
 public class LoginResponseDto {
     private String jwt;
     private Long id;
+    private Long clinicId;
 }

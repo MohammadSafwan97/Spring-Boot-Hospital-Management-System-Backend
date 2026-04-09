@@ -18,7 +18,7 @@ public class CorsConfig {
 
                 registry.addMapping("/api/**")
                         .allowedOrigins("https://react-hms-front-end.vercel.app",
-                                "http://localhost:5173"
+                                "http://localhost:5173,http://127.0.0.1:5000/"
                                 )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*");

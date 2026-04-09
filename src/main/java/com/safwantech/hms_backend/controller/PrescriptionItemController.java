@@ -16,17 +16,18 @@ public class PrescriptionItemController {
 
     @PostMapping
     public ResponseEntity<PrescriptionItemDto> createItem(
+            @RequestParam Long clinicId,
             @RequestBody PrescriptionItemDto dto){
 
         return ResponseEntity.ok(
-                prescriptionItemService.createItem(dto)
+                prescriptionItemService.createItem(clinicId, dto)
         );
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteItem(@PathVariable Long id){
+    public ResponseEntity<String> deleteItem(@RequestParam Long clinicId, @PathVariable Long id){
 
-        prescriptionItemService.deleteItem(id);
+        prescriptionItemService.deleteItem(clinicId, id);
 
         return ResponseEntity.ok("Item deleted");
     }

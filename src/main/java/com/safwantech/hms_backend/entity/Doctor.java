@@ -13,6 +13,7 @@ import java.util.List;
 @Table(
         name = "doctors",
         indexes = {
+                @Index(name = "idx_doctor_clinic", columnList = "clinic_id"),
                 @Index(name = "idx_doctor_email", columnList = "email"),
                 @Index(name = "idx_doctor_specialization", columnList = "specialization")
         })
@@ -29,6 +30,10 @@ public class Doctor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "clinic_id", nullable = false)
+    private Clinic clinic;
 
     @NotBlank(message = " name is required")
     @Size(max = 50)

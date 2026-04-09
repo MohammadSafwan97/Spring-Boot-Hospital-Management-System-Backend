@@ -10,6 +10,7 @@ import lombok.*;
 @Builder
 public class UserDto {
         private Long id;
+        private Long clinicId;
         private String username;
         private String email;
         private String password;

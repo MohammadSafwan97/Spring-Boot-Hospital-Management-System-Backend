@@ -15,6 +15,7 @@ import java.util.List;
 @Table(
         name = "users",
         indexes = {
+                @Index(name = "idx_user_clinic", columnList = "clinic_id"),
                 @Index(name = "idx_user_email", columnList = "email"),
                 @Index(name = "idx_user_role", columnList = "role")
         }
@@ -30,6 +31,10 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "clinic_id", nullable = false)
+    private Clinic clinic;
 
     @Column(nullable = false)
     private String username;

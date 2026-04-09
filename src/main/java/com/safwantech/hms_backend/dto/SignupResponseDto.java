@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class SignupResponseDto {
     private Long id;
+    private Long clinicId;
     private String username;
 }

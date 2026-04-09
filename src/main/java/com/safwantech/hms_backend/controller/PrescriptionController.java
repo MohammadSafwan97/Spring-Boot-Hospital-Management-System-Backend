@@ -5,7 +5,6 @@ import com.safwantech.hms_backend.service.PrescriptionService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,28 +39,28 @@ public class PrescriptionController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PrescriptionDto> getPrescriptionById(
+            @RequestParam Long clinicId,
             @PathVariable @Positive Long id
     ) {
-        PrescriptionDto prescription = prescriptionService.getPrescriptionById(id);
+        PrescriptionDto prescription = prescriptionService.getPrescriptionById(clinicId, id);
         return ResponseEntity.ok(prescription);
     }
 
     @GetMapping
-    public ResponseEntity<List<PrescriptionDto>> getAllPrescriptions() {
-
-        List<PrescriptionDto> prescriptions = prescriptionService.getAllPrescriptions();
-
+    public ResponseEntity<List<PrescriptionDto>> getAllPrescriptions(@RequestParam Long clinicId) {
+        List<PrescriptionDto> prescriptions = prescriptionService.getAllPrescriptions(clinicId);
         return ResponseEntity.ok(prescriptions);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<PrescriptionDto> updatePrescription(
+            @RequestParam Long clinicId,
             @PathVariable Long id,
             @Valid @RequestBody PrescriptionDto dto
     ) {
     try {
         PrescriptionDto updatedPrescription =
-                prescriptionService.updatePrescription(id, dto);
+                prescriptionService.updatePrescription(clinicId, id, dto);
 
         return ResponseEntity.ok(updatedPrescription);
     }catch(Exception e ){
@@ -71,10 +70,11 @@ public class PrescriptionController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePrescription(
+            @RequestParam Long clinicId,
             @PathVariable Long id
     ) {
     try {
-        prescriptionService.deletePrescription(id);
+        prescriptionService.deletePrescription(clinicId, id);
 
         return ResponseEntity.ok("Prescription deleted successfully");
     }catch(Exception e){

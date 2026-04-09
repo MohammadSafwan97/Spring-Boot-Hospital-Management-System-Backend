@@ -2,7 +2,10 @@ package com.safwantech.hms_backend.service;
 
 import com.safwantech.hms_backend.dto.UserDto;
 import com.safwantech.hms_backend.dto.UserResponseDto;
+import com.safwantech.hms_backend.entity.Clinic;
 import com.safwantech.hms_backend.entity.User;
+import com.safwantech.hms_backend.exception.ResourceNotFoundException;
+import com.safwantech.hms_backend.repository.ClinicRepository;
 import com.safwantech.hms_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -16,24 +19,20 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ClinicRepository clinicRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
-    /* ---------------- GET ALL USERS ---------------- */
-
-    public List<UserDto> getAllUsers() {
-
-        return userRepository.findAll()
+    public List<UserDto> getAllUsers(Long clinicId) {
+        return userRepository.findByClinicId(clinicId)
                 .stream()
-                .map(user -> modelMapper.map(user, UserDto.class))
+                .map(this::mapToDto)
                 .toList();
     }
 
-    /* ---------------- CREATE USER ---------------- */
-
     public UserResponseDto createUser(UserDto dto) {
-
         User user = User.builder()
+                .clinic(getClinic(dto.getClinicId()))
                 .username(dto.getUsername())
                 .email(dto.getEmail())
                 .password(passwordEncoder.encode(dto.getPassword()))
@@ -41,39 +40,62 @@ public class UserService {
                 .active(dto.isActive())
                 .build();
 
-        User savedUser = userRepository.save(user);
-
-        return modelMapper.map(savedUser, UserResponseDto.class);
+        return mapToResponseDto(userRepository.save(user));
     }
 
-    /* ---------------- UPDATE USER ---------------- */
-
-    public UserDto updateUser(Long id, UserDto dto) {
-
-        User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    public UserDto updateUser(Long clinicId, Long id, UserDto dto) {
+        User existingUser = userRepository.findByIdAndClinicId(id, clinicId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id + " for clinic: " + clinicId));
 
         existingUser.setUsername(dto.getUsername());
         existingUser.setEmail(dto.getEmail());
         existingUser.setRole(dto.getRole());
+        existingUser.setActive(dto.isActive());
 
-        User updatedUser = userRepository.save(existingUser);
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            existingUser.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
 
-        return modelMapper.map(updatedUser, UserDto.class);
+        return mapToDto(userRepository.save(existingUser));
     }
 
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    public void deleteUser(Long clinicId, Long id) {
+        User user = userRepository.findByIdAndClinicId(id, clinicId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id + " for clinic: " + clinicId));
+        userRepository.delete(user);
     }
 
-    public UserDto findByUsername(String name) {
-        User user = userRepository.findByUsername(name).orElseThrow();
-        return modelMapper.map(user, UserDto.class);
+    public UserDto findByUsername(Long clinicId, String name) {
+        User user = userRepository.findByUsernameAndClinicId(name, clinicId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + name + " for clinic: " + clinicId));
+        return mapToDto(user);
     }
 
-    public UserDto findById(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow();
-        return modelMapper.map(user, UserDto.class);
+    public UserDto findById(Long clinicId, Long userId) {
+        User user = userRepository.findByIdAndClinicId(userId, clinicId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId + " for clinic: " + clinicId));
+        return mapToDto(user);
     }
 
+    private Clinic getClinic(Long clinicId) {
+        return clinicRepository.findById(clinicId)
+                .orElseThrow(() -> new ResourceNotFoundException("Clinic not found with id: " + clinicId));
+    }
+
+    private UserDto mapToDto(User user) {
+        UserDto userDto = modelMapper.map(user, UserDto.class);
+        userDto.setClinicId(user.getClinic().getId());
+        userDto.setPassword(null);
+        return userDto;
+    }
+
+    private UserResponseDto mapToResponseDto(User user) {
+        return UserResponseDto.builder()
+                .id(user.getId())
+                .clinicId(user.getClinic().getId())
+                .username(user.getUsername())
+                .role(user.getRole())
+                .active(Boolean.TRUE.equals(user.getActive()))
+                .build();
+    }
 }
