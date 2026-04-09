@@ -5,9 +5,11 @@ import com.safwantech.hms_backend.dto.LoginRequestDto;
 import com.safwantech.hms_backend.dto.LoginResponseDto;
 import com.safwantech.hms_backend.dto.SignupRequestDto;
 import com.safwantech.hms_backend.dto.SignupResponseDto;
+import com.safwantech.hms_backend.dto.AuthUserDto;
 import com.safwantech.hms_backend.security.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,5 +28,10 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<SignupResponseDto> signup(@RequestBody SignupRequestDto signupResponseDto){
         return ResponseEntity.ok(authService.signup(signupResponseDto));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<AuthUserDto> currentUser() {
+        return ResponseEntity.ok(authService.getCurrentUser());
     }
 }

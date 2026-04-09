@@ -2,8 +2,8 @@
 -- CLINIC DATA
 -- =========================
 
-INSERT INTO clinics (name, subdomain, active, plan, subscription_start_date, subscription_end_date, trial, created_at, updated_at)
-VALUES ('Safwan Central Clinic', 'central', true, 'BASIC', '2026-01-01', '2026-12-31', false, NOW(), NOW());
+INSERT INTO clinics (name, subdomain, email, phone, address, logo_url, timezone, active, plan, subscription_start_date, subscription_end_date, trial, created_at, updated_at)
+VALUES ('Safwan Central Clinic', 'central', 'admin@centralclinic.com', '+923001112233', 'Main Boulevard, Karachi', null, 'Asia/Karachi', true, 'BASIC', '2026-01-01', '2026-12-31', false, NOW(), NOW());
 
 -- =========================
 -- DOCTOR DATA
@@ -45,3 +45,10 @@ VALUES (1, '2026-03-12', '11:00:00', 'SCHEDULED', 2, 2, NOW(), NOW());
 
 INSERT INTO appointments (clinic_id, appointment_date, appointment_time, status, patient_id, doctor_id, created_at, updated_at)
 VALUES (1, '2026-03-12', '12:00:00', 'SCHEDULED', 3, 3, NOW(), NOW());
+
+-- =========================
+-- PLATFORM OWNER
+-- =========================
+
+INSERT IGNORE INTO users (clinic_id, username, email, password, role, active, created_at, updated_at)
+VALUES (NULL, 'platformowner', 'owner@anchorage.local', '$2a$10$zDFx3YYarlX4aJYfqt4YqerV1JxVoEHkSzrTHMPypWVz7ESlDyKMG', 'SUPER_ADMIN', true, NOW(), NOW());

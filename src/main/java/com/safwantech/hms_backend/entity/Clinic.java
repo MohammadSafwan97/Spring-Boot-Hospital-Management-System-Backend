@@ -35,6 +35,16 @@ public class Clinic {
     @Column(unique = true)
     private String subdomain;
 
+    private String email;
+
+    private String phone;
+
+    private String address;
+
+    private String logoUrl;
+
+    private String timezone;
+
     // SaaS lifecycle
     @Column(nullable = false)
     private Boolean active = true;
