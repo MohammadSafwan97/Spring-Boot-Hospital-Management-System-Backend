@@ -2,6 +2,7 @@ package com.safwantech.hms_backend.controller;
 
 
 import com.safwantech.hms_backend.dto.PatientDto;
+import com.safwantech.hms_backend.security.CurrentUserUtil;
 import com.safwantech.hms_backend.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.util.List;
 public class PatientController {
 
     private final PatientService patientService;
+    private final CurrentUserUtil currentUserUtil;
 
 
 
@@ -26,6 +28,7 @@ public class PatientController {
     public ResponseEntity<PatientDto> createPatient(
             @RequestBody PatientDto patientDto) {
         try {
+            patientDto.setClinicId(currentUserUtil.getCurrentClinicId());
             PatientDto createdPatient = patientService.createPatient(patientDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdPatient);
         } catch (Exception e) {
@@ -37,36 +40,34 @@ public class PatientController {
     /* ---------------- GET ALL ---------------- */
 
     @GetMapping
-    public ResponseEntity<List<PatientDto>> getAllPatients(@RequestParam Long clinicId) {
-        return ResponseEntity.ok(patientService.getAllPatients(clinicId));
+    public ResponseEntity<List<PatientDto>> getAllPatients() {
+        return ResponseEntity.ok(patientService.getAllPatients(currentUserUtil.getCurrentClinicId()));
     }
 
     /* ---------------- GET BY ID ---------------- */
 
     @GetMapping("/{id}")
     public ResponseEntity<PatientDto> getPatientById(
-            @RequestParam Long clinicId,
             @PathVariable Long id) {
-        return ResponseEntity.ok(patientService.getPatientById(clinicId, id));
+        return ResponseEntity.ok(patientService.getPatientById(currentUserUtil.getCurrentClinicId(), id));
     }
 
     /* ---------------- UPDATE ---------------- */
 
     @PutMapping("/{id}")
     public ResponseEntity<PatientDto> updatePatient(
-            @RequestParam Long clinicId,
             @PathVariable Long id,
             @RequestBody PatientDto patientDto) {
-        return ResponseEntity.ok(patientService.updatePatient(clinicId, id, patientDto));
+        patientDto.setClinicId(currentUserUtil.getCurrentClinicId());
+        return ResponseEntity.ok(patientService.updatePatient(currentUserUtil.getCurrentClinicId(), id, patientDto));
     }
 
     /* ---------------- DELETE ---------------- */
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePatient(
-            @RequestParam Long clinicId,
             @PathVariable Long id) {
-        patientService.deletePatient(clinicId, id);
+        patientService.deletePatient(currentUserUtil.getCurrentClinicId(), id);
 
         return ResponseEntity.ok("Patient deleted successfully");
     }

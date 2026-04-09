@@ -1,6 +1,7 @@
 package com.safwantech.hms_backend.controller;
 
 import com.safwantech.hms_backend.dto.PrescriptionDto;
+import com.safwantech.hms_backend.security.CurrentUserUtil;
 import com.safwantech.hms_backend.service.PrescriptionService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -17,6 +18,7 @@ import java.util.List;
 public class PrescriptionController {
 
     private final PrescriptionService prescriptionService;
+    private final CurrentUserUtil currentUserUtil;
 
     @GetMapping("/health")
     public String healthCheck(){
@@ -28,6 +30,7 @@ public class PrescriptionController {
             @Valid @RequestBody PrescriptionDto dto
     ) {
     try {
+        dto.setClinicId(currentUserUtil.getCurrentClinicId());
         PrescriptionDto createdPrescription = prescriptionService.createPrescription(dto);
 
         return new ResponseEntity<>(createdPrescription, HttpStatus.CREATED);
@@ -39,28 +42,27 @@ public class PrescriptionController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PrescriptionDto> getPrescriptionById(
-            @RequestParam Long clinicId,
             @PathVariable @Positive Long id
     ) {
-        PrescriptionDto prescription = prescriptionService.getPrescriptionById(clinicId, id);
+        PrescriptionDto prescription = prescriptionService.getPrescriptionById(currentUserUtil.getCurrentClinicId(), id);
         return ResponseEntity.ok(prescription);
     }
 
     @GetMapping
-    public ResponseEntity<List<PrescriptionDto>> getAllPrescriptions(@RequestParam Long clinicId) {
-        List<PrescriptionDto> prescriptions = prescriptionService.getAllPrescriptions(clinicId);
+    public ResponseEntity<List<PrescriptionDto>> getAllPrescriptions() {
+        List<PrescriptionDto> prescriptions = prescriptionService.getAllPrescriptions(currentUserUtil.getCurrentClinicId());
         return ResponseEntity.ok(prescriptions);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<PrescriptionDto> updatePrescription(
-            @RequestParam Long clinicId,
             @PathVariable Long id,
             @Valid @RequestBody PrescriptionDto dto
     ) {
     try {
+        dto.setClinicId(currentUserUtil.getCurrentClinicId());
         PrescriptionDto updatedPrescription =
-                prescriptionService.updatePrescription(clinicId, id, dto);
+                prescriptionService.updatePrescription(currentUserUtil.getCurrentClinicId(), id, dto);
 
         return ResponseEntity.ok(updatedPrescription);
     }catch(Exception e ){
@@ -70,11 +72,10 @@ public class PrescriptionController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePrescription(
-            @RequestParam Long clinicId,
             @PathVariable Long id
     ) {
     try {
-        prescriptionService.deletePrescription(clinicId, id);
+        prescriptionService.deletePrescription(currentUserUtil.getCurrentClinicId(), id);
 
         return ResponseEntity.ok("Prescription deleted successfully");
     }catch(Exception e){

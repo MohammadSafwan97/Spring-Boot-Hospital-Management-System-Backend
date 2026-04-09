@@ -2,6 +2,7 @@ package com.safwantech.hms_backend.controller;
 
 import com.safwantech.hms_backend.dto.UserDto;
 import com.safwantech.hms_backend.dto.UserResponseDto;
+import com.safwantech.hms_backend.security.CurrentUserUtil;
 import com.safwantech.hms_backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +17,13 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final CurrentUserUtil currentUserUtil;
 
     /* ---------------- GET ALL USERS ---------------- */
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers(@RequestParam Long clinicId) {
-        return ResponseEntity.ok(userService.getAllUsers(clinicId));
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers(currentUserUtil.getCurrentClinicId()));
     }
 
     /* ---------------- CREATE USER ---------------- */
@@ -30,6 +32,7 @@ public class UserController {
     public ResponseEntity<UserResponseDto> createUser(@RequestBody UserDto userDto) {
 
         try {
+            userDto.setClinicId(currentUserUtil.getCurrentClinicId());
 
             UserResponseDto savedUser = userService.createUser(userDto);
 
@@ -47,33 +50,33 @@ public class UserController {
     /* ---------------- GET USER BY USERNAME ---------------- */
 
     @GetMapping("/username/{name}")
-    public ResponseEntity<UserDto> getUserByName(@RequestParam Long clinicId, @PathVariable String name) {
-        return ResponseEntity.ok(userService.findByUsername(clinicId, name));
+    public ResponseEntity<UserDto> getUserByName(@PathVariable String name) {
+        return ResponseEntity.ok(userService.findByUsername(currentUserUtil.getCurrentClinicId(), name));
     }
 
     /* ---------------- GET USER BY ID ---------------- */
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> getUserById(@RequestParam Long clinicId, @PathVariable Long userId) {
-        return ResponseEntity.ok(userService.findById(clinicId, userId));
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.findById(currentUserUtil.getCurrentClinicId(), userId));
     }
 
     /* ---------------- UPDATE USER ---------------- */
 
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(
-            @RequestParam Long clinicId,
             @PathVariable Long id,
             @RequestBody UserDto userDto
     ) {
-        return ResponseEntity.ok(userService.updateUser(clinicId, id, userDto));
+        userDto.setClinicId(currentUserUtil.getCurrentClinicId());
+        return ResponseEntity.ok(userService.updateUser(currentUserUtil.getCurrentClinicId(), id, userDto));
     }
 
     /* ---------------- DELETE USER ---------------- */
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@RequestParam Long clinicId, @PathVariable Long id) {
-        userService.deleteUser(clinicId, id);
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(currentUserUtil.getCurrentClinicId(), id);
         return ResponseEntity.noContent().build();
     }
 

@@ -1,6 +1,7 @@
 package com.safwantech.hms_backend.controller;
 
 import com.safwantech.hms_backend.dto.AppointmentDto;
+import com.safwantech.hms_backend.security.CurrentUserUtil;
 import com.safwantech.hms_backend.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,11 +17,13 @@ import java.util.List;
 
 public class AppointmentController {
     private final AppointmentService appointmentService;
+    private final CurrentUserUtil currentUserUtil;
 
     @PostMapping
     public ResponseEntity<AppointmentDto> createAppointment(@RequestBody
                                                             AppointmentDto appointmentDto) {
         try {
+            appointmentDto.setClinicId(currentUserUtil.getCurrentClinicId());
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(appointmentService.createAppointment(appointmentDto));
         } catch (Exception e) {
@@ -31,14 +34,14 @@ public class AppointmentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AppointmentDto>> getAllAppointments(@RequestParam Long clinicId) {
-        List<AppointmentDto> appointments = appointmentService.getAllAppointments(clinicId);
+    public ResponseEntity<List<AppointmentDto>> getAllAppointments() {
+        List<AppointmentDto> appointments = appointmentService.getAllAppointments(currentUserUtil.getCurrentClinicId());
         return ResponseEntity.ok(appointments);
     }
     @GetMapping("{appointmentId}")
-    public ResponseEntity<AppointmentDto> getById(@RequestParam Long clinicId, @PathVariable Long appointmentId){
+    public ResponseEntity<AppointmentDto> getById(@PathVariable Long appointmentId){
         try {
-            AppointmentDto appointmentDto = appointmentService.getById(clinicId, appointmentId);
+            AppointmentDto appointmentDto = appointmentService.getById(currentUserUtil.getCurrentClinicId(), appointmentId);
             return ResponseEntity.status(HttpStatus.OK).body(appointmentDto);
         }catch (Exception e){
             e.printStackTrace();
@@ -47,9 +50,10 @@ public class AppointmentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AppointmentDto> updateById(@RequestParam Long clinicId, @PathVariable Long id, @RequestBody AppointmentDto appointmentDto) {
+    public ResponseEntity<AppointmentDto> updateById(@PathVariable Long id, @RequestBody AppointmentDto appointmentDto) {
         try {
-            AppointmentDto updatedAppointment = appointmentService.updateAppointment(clinicId, id, appointmentDto);
+            appointmentDto.setClinicId(currentUserUtil.getCurrentClinicId());
+            AppointmentDto updatedAppointment = appointmentService.updateAppointment(currentUserUtil.getCurrentClinicId(), id, appointmentDto);
             return ResponseEntity.ok(updatedAppointment);
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,8 +62,8 @@ public class AppointmentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteAppointment(@RequestParam Long clinicId, @PathVariable Long id){
-        appointmentService.deleteAppointment(clinicId, id);
+    public ResponseEntity<String> deleteAppointment(@PathVariable Long id){
+        appointmentService.deleteAppointment(currentUserUtil.getCurrentClinicId(), id);
 
         return ResponseEntity.ok("Appointment deleted successfully");
 
