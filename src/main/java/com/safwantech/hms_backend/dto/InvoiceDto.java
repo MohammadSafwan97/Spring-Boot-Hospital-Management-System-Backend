@@ -25,6 +25,9 @@ public class InvoiceDto {
 
     private Long patientId;
     private Long doctorId;
+    private Long serviceId;
+    private String serviceName;
+    private BigDecimal servicePrice;
 
     @NotNull
     @DecimalMin(value = "0.0", inclusive = true)

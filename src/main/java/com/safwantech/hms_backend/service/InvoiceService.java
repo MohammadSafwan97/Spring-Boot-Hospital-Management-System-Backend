@@ -4,11 +4,13 @@ import com.safwantech.hms_backend.dto.InvoiceDto;
 import com.safwantech.hms_backend.entity.Appointment;
 import com.safwantech.hms_backend.entity.Clinic;
 import com.safwantech.hms_backend.entity.Invoice;
+import com.safwantech.hms_backend.entity.type.PaymentStatus;
 import com.safwantech.hms_backend.exception.ResourceNotFoundException;
 import com.safwantech.hms_backend.repository.AppointmentRepository;
 import com.safwantech.hms_backend.repository.ClinicRepository;
 import com.safwantech.hms_backend.repository.InvoiceRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
@@ -35,7 +38,7 @@ public class InvoiceService {
 
         Invoice invoice = Invoice.builder()
                 .invoiceDate(dto.getInvoiceDate() != null ? dto.getInvoiceDate() : LocalDateTime.now())
-                .consultationFee(safeAmount(dto.getConsultationFee()))
+                .consultationFee(dto.getConsultationFee() != null ? safeAmount(dto.getConsultationFee()) : safeAmount(appointment.getService() != null ? appointment.getService().getPrice() : BigDecimal.ZERO))
                 .extraCharges(safeAmount(dto.getExtraCharges()))
                 .paymentStatus(dto.getPaymentStatus())
                 .paymentMethod(dto.getPaymentMethod())
@@ -49,8 +52,11 @@ public class InvoiceService {
 
         Invoice savedInvoice = invoiceRepository.save(invoice);
         savedInvoice.setInvoiceNumber(buildInvoiceNumber(savedInvoice.getId()));
-
-        return mapToDto(invoiceRepository.save(savedInvoice));
+        appointment.setBilled(true);
+        appointmentRepository.save(appointment);
+        Invoice finalInvoice = invoiceRepository.save(savedInvoice);
+        log.info("AUDIT invoice.created clinicId={} invoiceId={} appointmentId={}", clinic.getId(), finalInvoice.getId(), appointment.getId());
+        return mapToDto(finalInvoice);
     }
 
     @Transactional
@@ -76,14 +82,21 @@ public class InvoiceService {
         invoice.setPaymentMethod(dto.getPaymentMethod());
         invoice.setTokenNumber(trimToNull(dto.getTokenNumber()));
         invoice.setNotes(trimToNull(dto.getNotes()));
-
-        return mapToDto(invoiceRepository.save(invoice));
+        Invoice saved = invoiceRepository.save(invoice);
+        log.info("AUDIT invoice.updated clinicId={} invoiceId={} paymentStatus={}", clinicId, saved.getId(), saved.getPaymentStatus());
+        return mapToDto(saved);
     }
 
     @Transactional
     public void deleteInvoice(Long clinicId, Long id) {
         Invoice invoice = findInvoice(clinicId, id);
+        Appointment appointment = invoice.getAppointment();
         invoiceRepository.delete(invoice);
+        if (appointment != null) {
+            appointment.setBilled(false);
+            appointmentRepository.save(appointment);
+        }
+        log.info("AUDIT invoice.deleted clinicId={} invoiceId={}", clinicId, id);
     }
 
     private Clinic getClinic(Long clinicId) {
@@ -105,7 +118,7 @@ public class InvoiceService {
                 ));
     }
 
-    private InvoiceDto mapToDto(Invoice invoice) {
+    InvoiceDto mapToDto(Invoice invoice) {
         InvoiceDto dto = new InvoiceDto();
         dto.setId(invoice.getId());
         dto.setInvoiceNumber(invoice.getInvoiceNumber());
@@ -114,6 +127,9 @@ public class InvoiceService {
         dto.setAppointmentId(invoice.getAppointment().getId());
         dto.setPatientId(invoice.getPatient().getId());
         dto.setDoctorId(invoice.getDoctor().getId());
+        dto.setServiceId(invoice.getAppointment().getService() != null ? invoice.getAppointment().getService().getId() : null);
+        dto.setServiceName(invoice.getAppointment().getService() != null ? invoice.getAppointment().getService().getName() : null);
+        dto.setServicePrice(invoice.getAppointment().getService() != null ? invoice.getAppointment().getService().getPrice() : null);
         dto.setConsultationFee(invoice.getConsultationFee());
         dto.setExtraCharges(invoice.getExtraCharges());
         dto.setTotalAmount(invoice.getTotalAmount());
@@ -122,6 +138,10 @@ public class InvoiceService {
         dto.setTokenNumber(invoice.getTokenNumber());
         dto.setNotes(invoice.getNotes());
         return dto;
+    }
+
+    public Long getPendingInvoiceCount(Long clinicId) {
+        return invoiceRepository.countByClinicIdAndPaymentStatus(clinicId, PaymentStatus.UNPAID);
     }
 
     private String buildInvoiceNumber(Long id) {

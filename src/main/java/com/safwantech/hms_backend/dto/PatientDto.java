@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -38,4 +39,6 @@ public class PatientDto {
 
     @NotNull
     private PatientType patientType;
+
+    private LocalDateTime createdAt;
 }

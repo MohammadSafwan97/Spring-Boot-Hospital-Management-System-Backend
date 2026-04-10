@@ -1,6 +1,7 @@
 package com.safwantech.hms_backend.entity;
 
 import com.safwantech.hms_backend.entity.type.AppointmentStatus;
+import com.safwantech.hms_backend.entity.type.AppointmentSource;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -43,6 +44,10 @@ public class Appointment {
     private List<Prescription> prescriptions;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_id")
+    private ClinicServiceDefinition service;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
 
@@ -56,6 +61,16 @@ public class Appointment {
 
     @Size(max = 255)
     private String remarks;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AppointmentSource source;
+
+    private LocalDateTime checkedInAt;
+
+    @Column(nullable = false)
+    private Boolean billed = false;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
     @UpdateTimestamp
@@ -66,6 +81,12 @@ public class Appointment {
         createdAt = LocalDateTime.now();
         if (status == null) {
             status = AppointmentStatus.SCHEDULED;
+        }
+        if (source == null) {
+            source = AppointmentSource.WALK_IN;
+        }
+        if (billed == null) {
+            billed = false;
         }
     }
 

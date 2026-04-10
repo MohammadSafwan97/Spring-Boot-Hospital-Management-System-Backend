@@ -2,6 +2,7 @@ package com.safwantech.hms_backend.controller;
 
 
 import com.safwantech.hms_backend.dto.PatientDto;
+import com.safwantech.hms_backend.dto.PatientProfileDto;
 import com.safwantech.hms_backend.security.CurrentUserUtil;
 import com.safwantech.hms_backend.service.PatientService;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +51,11 @@ public class PatientController {
     public ResponseEntity<PatientDto> getPatientById(
             @PathVariable Long id) {
         return ResponseEntity.ok(patientService.getPatientById(currentUserUtil.getCurrentClinicId(), id));
+    }
+
+    @GetMapping("/{id}/profile")
+    public ResponseEntity<PatientProfileDto> getPatientProfile(@PathVariable Long id) {
+        return ResponseEntity.ok(patientService.getPatientProfile(currentUserUtil.getCurrentClinicId(), id));
     }
 
     /* ---------------- UPDATE ---------------- */

@@ -1,5 +1,7 @@
 package com.safwantech.hms_backend.dto;
 
+import java.math.BigDecimal;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,9 +18,9 @@ public class DashboardStatsDto {
     private Long todayAppointments;
     private Long pendingAppointments;
     private Long completedAppointments;
-    private Long newPatientsThisMonth;
+    private Long checkedInPatients;
+    private Long newPatientsThisWeek;
     private Long emergencyPatients;
-
-
-
+    private Long pendingBills;
+    private BigDecimal totalRevenueToday;
 }

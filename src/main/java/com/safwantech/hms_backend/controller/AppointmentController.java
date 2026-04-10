@@ -61,6 +61,11 @@ public class AppointmentController {
         }
     }
 
+    @PatchMapping("/{id}/check-in")
+    public ResponseEntity<AppointmentDto> checkInAppointment(@PathVariable Long id) {
+        return ResponseEntity.ok(appointmentService.checkInAppointment(currentUserUtil.getCurrentClinicId(), id));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteAppointment(@PathVariable Long id){
         appointmentService.deleteAppointment(currentUserUtil.getCurrentClinicId(), id);
